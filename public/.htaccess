@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Abaikan file/folder yang ada
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Routing semua request ke front controller
+RewriteRule ^ index.php [L,QSA]

@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Abaikan file/folder yang ada (kecuali folder public tetap diakses)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Arahkan semua request ke front controller di public/
+RewriteRule ^ public/index.php [L,QSA]
