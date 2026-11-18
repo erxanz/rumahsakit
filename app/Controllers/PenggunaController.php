@@ -36,8 +36,11 @@ final class PenggunaController extends CrudController
 
     protected function beforeStore(Request $request, array $payload): array
     {
-        $payload['password_hash'] = password_hash((string) $payload['password'], PASSWORD_DEFAULT);
-        unset($payload['password']);
+        $password = $request->input('password');
+
+        if (is_string($password) && $password !== '') {
+            $payload['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
+        }
 
         $payload['__roles'] = $request->input('roles');
 
@@ -52,11 +55,12 @@ final class PenggunaController extends CrudController
 
     protected function beforeUpdate(Request $request, array $row, array $payload): array
     {
-        if (!empty($payload['password'])) {
-            $payload['password_hash'] = password_hash((string) $payload['password'], PASSWORD_DEFAULT);
+        $password = $request->input('password');
+
+        if (is_string($password) && $password !== '') {
+            $payload['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
         }
 
-        unset($payload['password']);
         $payload['__roles'] = $request->input('roles');
 
         return $payload;
