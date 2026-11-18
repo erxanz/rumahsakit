@@ -348,11 +348,19 @@ CREATE TABLE IF NOT EXISTS audit_log (
 -- =========================================================
 
 INSERT IGNORE INTO roles (nama_role, deskripsi) VALUES
-('super_admin', 'Akses penuh pengelolaan sistem'),
-('admin', 'Mengelola data operasional klinik'),
-('pendaftaran', 'Mengelola pasien dan pendaftaran kunjungan'),
-('dokter', 'Mengakses kunjungan dan mengelola rekam medis'),
-('kasir', 'Mengelola tagihan dan pembayaran');
+('super_admin', 'Akses penuh seluruh sistem'),
+('admin', 'Pengelolaan operasional klinik'),
+('pendaftaran', 'Mengelola pasien dan antrean kunjungan'),
+('dokter', 'Pemeriksaan dan rekam medis'),
+('kasir', 'Mengelola tagihan dan pembayaran'),
+('pasien', 'Pendaftaran online dan riwayat sendiri');
+
+-- Samakan deskripsi role yang sudah ada sebelumnya (INSERT IGNORE tidak menimpa)
+UPDATE roles SET deskripsi = 'Akses penuh seluruh sistem'    WHERE nama_role = 'super_admin';
+UPDATE roles SET deskripsi = 'Pengelolaan operasional klinik' WHERE nama_role = 'admin';
+UPDATE roles SET deskripsi = 'Mengelola pasien dan antrean kunjungan' WHERE nama_role = 'pendaftaran';
+UPDATE roles SET deskripsi = 'Pemeriksaan dan rekam medis'    WHERE nama_role = 'dokter';
+UPDATE roles SET deskripsi = 'Mengelola tagihan dan pembayaran' WHERE nama_role = 'kasir';
 
 INSERT IGNORE INTO permissions (kode_permission, nama_permission, deskripsi) VALUES
 ('dashboard.view', 'Lihat dashboard', 'Melihat halaman dashboard'),
@@ -426,4 +434,15 @@ WHERE r.nama_role = 'kasir'
   AND p.kode_permission IN (
     'dashboard.view','pasien.view','kunjungan.view',
     'pembayaran.view','pembayaran.manage'
+  );
+
+INSERT IGNORE INTO role_permissions (id_role, id_permission)
+SELECT r.id_role, p.id_permission
+FROM roles r
+CROSS JOIN permissions p
+WHERE r.nama_role = 'pasien'
+  AND p.kode_permission IN (
+    'dashboard.view','pasien.view',
+    'kunjungan.view','kunjungan.manage',
+    'rekam_medis.view','pembayaran.view'
   );

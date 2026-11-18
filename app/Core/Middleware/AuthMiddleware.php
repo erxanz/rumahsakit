@@ -7,6 +7,7 @@ namespace App\Core\Middleware;
 use App\Core\Database;
 use App\Core\HttpException;
 use App\Core\Jwt;
+use App\Core\Permissions;
 use App\Core\Request;
 use App\Core\Response;
 
@@ -117,14 +118,7 @@ final class AuthMiddleware
             'username' => $user['username'],
             'email' => $user['email_login'],
             'roles' => ['pasien'],
-            'permissions' => [
-                'dashboard.view',
-                'pasien.view',
-                'kunjungan.view',
-                'kunjungan.manage',
-                'rekam_medis.view',
-                'pembayaran.view',
-            ],
+            'permissions' => Permissions::forRole('pasien'),
         ];
     }
 }
